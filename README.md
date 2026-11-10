@@ -1,11 +1,11 @@
 # Anthropic Claude Code adapter for upstream Pi
 
-A headless-compatible provider extension, tested with upstream Pi 1.4.0. No fork runtime, new credentials, extra tools, or paid fallback.
+A headless-compatible provider extension, tested with upstream Pi 1.4.0 and 1.5.1. No fork runtime, new credentials, extra tools, or paid fallback.
 
 For OAuth-shaped Anthropic keys only:
 
 - Use `claude-cli/2.1.321 (external, cli)` and send `X-Claude-Code-Session-Id` when a session ID is supplied, including with caching disabled.
-- Replace the exact stock Pi/Shuvpi harness identity sentence with the Claude Code identity.
+- Replace the exact stock Pi/Shuvpi harness identity sentence (both the ≤1.4 "expert coding assistant operating inside" and the 1.5 "coding assistant running inside" wording) with the Claude Code identity.
 - Retain the fork's case-insensitive `shuvpi` → `Claude` replacement in initial system text.
 - Rewrite standalone `pi` prose in initial system text (including Pi's documentation guidance) to `Claude`, without rewriting Pi path segments, package IDs, URLs, or environment variable names.
 - Preserve model/request header overrides, including explicit `null` suppression.
@@ -49,7 +49,7 @@ tsc --project tsconfig.json
 
 `node_modules` is ignored; local host-package links are not published. Tests use fake credentials and intercepted HTTP, including a real SDK session and extension loading. No tests call Anthropic.
 
-Extraction verification against the installed Pi 1.5.1 failed before tests ran: `@earendil-works/pi-ai` no longer exports `Type`, which the test imports. The prior Pi 1.4.0 verification described above is historical, not a claim of compatibility with 1.5.1. The adapter implementation is unchanged; upgrading the tests and verifying current-host compatibility remain follow-up work.
+Verified against the installed Pi 1.5.1. That release removed the `Type` export from `@earendil-works/pi-ai` (tests now pass a plain JSON Schema for tool parameters) and reworded the stock identity sentence, which the adapter now also matches exactly.
 
 The user-agent version deliberately matches the fork and tested upstream version. Recheck it and the captured-request tests when upgrading Pi.
 

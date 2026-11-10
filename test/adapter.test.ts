@@ -10,7 +10,6 @@ import {
 	normalizeContext,
 	type ProviderHeaders,
 	type SimpleStreamOptions,
-	Type,
 } from "@earendil-works/pi-ai";
 import { builtinProviders } from "@earendil-works/pi-ai/providers/all";
 import {
@@ -25,6 +24,7 @@ import { createClaudeCodeProvider } from "../index.ts";
 const CLAUDE_IDENTITY = "You are Claude Code, Anthropic's official CLI for Claude.";
 const PI_IDENTITY = "You are an expert coding assistant operating inside pi, a coding agent harness.";
 const SHUVPI_IDENTITY = "You are an expert coding assistant operating inside shuvpi, a coding agent harness.";
+const PI_15_IDENTITY = "You are a coding assistant running inside pi, a coding agent harness.";
 const PROMPT = `${PI_IDENTITY}\n${SHUVPI_IDENTITY}\nSHUVPI/path pi/pip π 😀`;
 const model: Model<"anthropic-messages"> = {
 	id: "claude-test",
@@ -41,7 +41,7 @@ const model: Model<"anthropic-messages"> = {
 const context = normalizeContext({
 	systemPrompt: PROMPT,
 	messages: [{ role: "user", content: "Do not rewrite shuvpi here", timestamp: 0 }],
-	tools: [{ name: "read", description: "Read", parameters: Type.Object({}) }],
+	tools: [{ name: "read", description: "Read", parameters: { type: "object", properties: {} } }],
 });
 
 interface Payload {
@@ -327,9 +327,12 @@ test("loads the installed extension through a real SDK session without real cred
 		assert.equal(captures[0].headers.get("user-agent"), "claude-cli/2.1.321 (external, cli)");
 		assert.equal(captures[0].headers.get("x-claude-code-session-id"), session.sessionManager.getSessionId());
 		assert.ok(captures[0].body.system.every((block) => !block.text.includes(PI_IDENTITY)));
+		assert.ok(captures[0].body.system.every((block) => !block.text.includes(PI_15_IDENTITY)));
+		assert.ok(!captures[0].body.system.some((block) => block.text.includes("running inside Claude")));
 		const sentPrompt = captures[0].body.system.map((block) => block.text).join("\n");
 		assert.ok(sentPrompt.includes("Claude documentation"));
-		assert.ok(sentPrompt.includes("When working on Claude topics"));
+		assert.ok(sentPrompt.includes(`${CLAUDE_IDENTITY} Help users inspect files`));
+		assert.ok(sentPrompt.includes("When reading Claude docs"));
 		assert.ok(!sentPrompt.includes("Pi documentation"));
 		assert.ok(sentPrompt.includes("@earendil-works/pi-coding-agent"));
 		assert.ok(sentPrompt.includes(`<cwd>\n${directory}\n</cwd>`));
