@@ -1,0 +1,19 @@
+{
+	// Standalone: no dependency on the original shuvpi monorepo.
+
+	"compilerOptions": {
+		"target": "ES2022",
+		"lib": ["ES2022"],
+		"strict": true,
+		"skipLibCheck": true,
+		"allowImportingTsExtensions": true,
+		"types": ["node"],
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"noEmit": true
+	},
+	"include": [
+		"index.ts",
+		"test/**/*.ts"
+	]
+}

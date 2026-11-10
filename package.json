@@ -1,0 +1,16 @@
+{
+	"name": "@shuv1337/pi-anthropic-claude-code",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"description": "Anthropic OAuth request compatibility for upstream Pi.",
+	"pi": {
+		"extensions": [
+			"./index.ts"
+		]
+	},
+	"peerDependencies": {
+		"@earendil-works/pi-ai": "*",
+		"@earendil-works/pi-coding-agent": "*"
+	}
+}
